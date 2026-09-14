@@ -62,7 +62,7 @@
 
 ### 남은 구현 순서
 
-### 현재 작업: 내 상품 목록 조회 Service
+### 내 상품 목록 조회 Service (4cb7539, 성민 브랜치 푸시 완료)
 
 - 피드백 항목인 내 상품 목록 조회의 Service 로직을 추가했다. 엔드포인트 제안은 GET /api/products/me이며 아직 연결되지 않았다.
 - ProductRepository.findByUserId에 Sort 인자를 추가했다. Product.userId가 전달된 사용자 ID와 일치하는 상품만 조회한다.
@@ -72,6 +72,18 @@
 - 공백 검사 수행. 컴파일·DB 실행 및 사용자 간 조회 격리 검증은 Java 환경 문제로 미수행이다.
 
 ### 다음 구현
+
+### 현재 작업: 상품 부분 수정
+
+- ProductUpdateRequest에 name, description, price, stock을 추가했다. 전달된 상품명은 공백 불가·최대 100자, 가격·재고는 0 이상이다.
+- 생략 및 null은 기존 값 유지, 설명의 빈 문자열은 설명 지우기, 빈 요청은 변경 없음으로 처리한다. 이 PATCH 규칙은 팀 명세 확인이 필요한 제안이다.
+- Product.update는 null이 아닌 필드만 변경하며 상품 ID·등록자·등록 시간을 변경하지 않는다.
+- ProductService.updateProduct는 상품 조회 후 전달된 사용자 ID와 등록자 ID를 비교하고, 일치할 때만 수정한다. JPA 변경 감지로 반영하며 실제 UPDATE 시 기존 PreUpdate가 수정 시간을 기록한다.
+- 상품 없음은 ProductNotFoundException, 등록자 불일치는 새 ProductAccessDeniedException으로 처리한다. HTTP 404/403 매핑 및 Controller, 기존 JWT 연결은 미완료다.
+- 수정 Service는 반환값이 없다. 최종 API 성공 상태·응답 형태는 팀 명세 확인 후 Controller에서 결정한다. 이미지 처리는 포함하지 않는다.
+- 파일 위치 유지. 공백 검사 수행. Java 환경 문제로 컴파일·DB 수정·권한 검증 테스트는 미수행이다.
+
+### 이후 구현
 
 1. 등록 Controller: 요청 방식(JSON/multipart), 팀 공통 응답 형식을 확정하고 Service·응답 DTO 연결.
 2. 인증 연동: 현재 체크아웃에는 JWT/인증 구현이 없다. 팀 인증 코드에서 사용자 ID를 얻는 방식을 확인해야 한다. 요청 본문의 사용자 ID를 신뢰하거나 임시 고정 사용자 ID를 사용하지 않는다.

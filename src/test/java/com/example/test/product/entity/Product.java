@@ -55,6 +55,22 @@ public class Product {
         return product;
     }
 
+    /** 검증된 수정 값만 반영한다. null은 기존 값 유지이며 등록자와 ID는 변경하지 않는다. */
+    public void update(String name, String description, Integer price, Integer stock) {
+        if (name != null) {
+            this.name = name;
+        }
+        if (description != null) {
+            this.description = description;
+        }
+        if (price != null) {
+            this.price = price;
+        }
+        if (stock != null) {
+            this.stock = stock;
+        }
+    }
+
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
