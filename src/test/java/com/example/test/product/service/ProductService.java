@@ -32,6 +32,19 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     /**
+     * 인증된 사용자가 등록한 상품만 최신 등록순으로 조회한다.
+     * userId는 요청 파라미터가 아닌 기존 인증 정보에서 전달해야 한다.
+     * TODO: 내 상품 Controller 및 JWT 연결. 현재는 사용자 ID로 필터링하는 로직만 구현.
+     */
+    @Transactional(readOnly = true)
+    public List<ProductListResponse> getMyProducts(@NotNull @Positive Long userId) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt", "productId");
+        return productRepository.findByUserId(userId, sort).stream()
+                .map(ProductListResponse::from)
+                .toList();
+    }
+
+    /**
      * 검색어 앞뒤 공백을 제거하고 상품명을 부분 검색한다. 결과가 없으면 빈 목록 반환.
      * TODO: 검색 Controller 및 검증 오류 응답 연결, 페이지네이션 정책 확정.
      */
