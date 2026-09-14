@@ -32,7 +32,7 @@
 
 ## 미완료 및 다음 단계
 
-### 현재 작업: 상품 목록 조회 DTO 및 Service
+### 상품 목록 조회 DTO 및 Service (85b32cb, 성민 브랜치 푸시 완료)
 
 - 등록 Controller는 인증 연동 방식 확인을 기다리며, 인증 없는 상품 목록 조회 작업을 먼저 진행한다.
 - ProductListResponse: 개별 상품의 productId, name, price, stock, createdAt을 전달한다. 상세 응답 계약은 제안 상태다.
@@ -41,6 +41,16 @@
 - 이번 변경도 컴파일·DB 실행은 미검증이며, 커밋 이력은 커밋 후 Git 로그에서 확인한다.
 
 ### 남은 작업
+
+### 현재 작업: 상품 상세 조회 DTO 및 Service
+
+- ProductDetailResponse: productId, name, description, price, stock, createdAt, updatedAt을 전달한다. 응답 필드는 제안 상태이며 팀 상세 명세 확인이 필요하다.
+- ProductService.getProduct: 상품 ID의 필수값·양수 검증, 읽기 전용 트랜잭션에서 findById 조회 후 DTO로 변환한다.
+- 상품이 없으면 ProductNotFoundException을 발생시킨다. HTTP 404 매핑은 아직 없으며, Controller와 상품 API 오류 처리 연결 시 구현해야 한다.
+- 상품 이미지 및 기본 이미지 URL, 기존 JWT 인증 연결은 미완료 상태를 유지한다.
+- 현재 src/test/java 위치 유지. 공백 검사 외 컴파일·DB 실행 검증은 미수행이다.
+
+### 이후 작업 순서
 
 1. 등록 Controller: 요청 방식(JSON/multipart), 팀 공통 응답 형식을 확정하고 Service·응답 DTO 연결.
 2. 인증 연동: 현재 체크아웃에는 JWT/인증 구현이 없다. 팀 인증 코드에서 사용자 ID를 얻는 방식을 확인해야 한다. 요청 본문의 사용자 ID를 신뢰하거나 임시 고정 사용자 ID를 사용하지 않는다.
