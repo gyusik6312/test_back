@@ -42,7 +42,7 @@
 
 ### 남은 작업
 
-### 현재 작업: 상품 상세 조회 DTO 및 Service
+### 상품 상세 조회 DTO 및 Service (422429c, 성민 브랜치 푸시 완료)
 
 - ProductDetailResponse: productId, name, description, price, stock, createdAt, updatedAt을 전달한다. 응답 필드는 제안 상태이며 팀 상세 명세 확인이 필요하다.
 - ProductService.getProduct: 상품 ID의 필수값·양수 검증, 읽기 전용 트랜잭션에서 findById 조회 후 DTO로 변환한다.
@@ -51,6 +51,16 @@
 - 현재 src/test/java 위치 유지. 공백 검사 외 컴파일·DB 실행 검증은 미수행이다.
 
 ### 이후 작업 순서
+
+### 현재 작업: 상품 검색 DTO·Repository·Service
+
+- ProductSearchRequest.keyword는 필수이며 빈 문자열·공백 검색어를 거부한다. Service에서 앞뒤 공백을 제거한다.
+- ProductRepository.findByNameContainingIgnoreCase로 상품명 부분 검색을 수행한다. 상품 설명은 현재 검색 대상이 아니다. 범위와 파라미터 이름은 팀 명세 확인이 필요하다.
+- ProductService.searchProducts는 읽기 전용 트랜잭션으로 조회하고 createdAt, productId 내림차순으로 정렬한 ProductListResponse 목록을 반환한다. 결과가 없으면 빈 목록이다.
+- 검색 Controller 및 검증 오류 HTTP 응답, 페이지네이션, 이미지 URL은 미연결이다. 기존 등록 JWT 연동도 대기 상태다.
+- src/test/java 위치 유지. 공백 검사 수행, Java 환경 문제로 컴파일·DB 검색 검증 미수행.
+
+### 남은 구현 순서
 
 1. 등록 Controller: 요청 방식(JSON/multipart), 팀 공통 응답 형식을 확정하고 Service·응답 DTO 연결.
 2. 인증 연동: 현재 체크아웃에는 JWT/인증 구현이 없다. 팀 인증 코드에서 사용자 ID를 얻는 방식을 확인해야 한다. 요청 본문의 사용자 ID를 신뢰하거나 임시 고정 사용자 ID를 사용하지 않는다.
