@@ -52,7 +52,7 @@
 
 ### 이후 작업 순서
 
-### 현재 작업: 상품 검색 DTO·Repository·Service
+### 상품 검색 DTO·Repository·Service (1171210, 성민 브랜치 푸시 완료)
 
 - ProductSearchRequest.keyword는 필수이며 빈 문자열·공백 검색어를 거부한다. Service에서 앞뒤 공백을 제거한다.
 - ProductRepository.findByNameContainingIgnoreCase로 상품명 부분 검색을 수행한다. 상품 설명은 현재 검색 대상이 아니다. 범위와 파라미터 이름은 팀 명세 확인이 필요하다.
@@ -61,6 +61,17 @@
 - src/test/java 위치 유지. 공백 검사 수행, Java 환경 문제로 컴파일·DB 검색 검증 미수행.
 
 ### 남은 구현 순서
+
+### 현재 작업: 내 상품 목록 조회 Service
+
+- 피드백 항목인 내 상품 목록 조회의 Service 로직을 추가했다. 엔드포인트 제안은 GET /api/products/me이며 아직 연결되지 않았다.
+- ProductRepository.findByUserId에 Sort 인자를 추가했다. Product.userId가 전달된 사용자 ID와 일치하는 상품만 조회한다.
+- ProductService.getMyProducts는 사용자 ID 필수값·양수 검증 후 읽기 전용 트랜잭션에서 createdAt, productId 내림차순 조회 및 ProductListResponse 변환을 수행한다. 해당 사용자의 상품이 없으면 빈 목록을 반환한다.
+- 현재 사용자 ID 필터링만 구현했다. Controller는 반드시 기존 JWT 인증에서 사용자 ID를 얻어 전달해야 하며 요청 파라미터의 임의 사용자 ID를 사용하면 안 된다. JWT 검증 및 사용자 존재 확인은 미구현이다.
+- 페이지네이션, 대표·기본 이미지 URL, HTTP 검증 오류 응답은 미연결이다. 파일 위치는 src/test/java에 유지한다.
+- 공백 검사 수행. 컴파일·DB 실행 및 사용자 간 조회 격리 검증은 Java 환경 문제로 미수행이다.
+
+### 다음 구현
 
 1. 등록 Controller: 요청 방식(JSON/multipart), 팀 공통 응답 형식을 확정하고 Service·응답 DTO 연결.
 2. 인증 연동: 현재 체크아웃에는 JWT/인증 구현이 없다. 팀 인증 코드에서 사용자 ID를 얻는 방식을 확인해야 한다. 요청 본문의 사용자 ID를 신뢰하거나 임시 고정 사용자 ID를 사용하지 않는다.
