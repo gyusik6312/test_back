@@ -40,6 +40,21 @@ public class Product {
     @Column(name = "user_id")
     private Long userId;
 
+    /**
+     * 검증된 상품 정보로 새 상품을 만든다. userId는 인증 정보에서 가져온다.
+     * 상품 ID와 생성·수정 시간은 DB 저장 시 설정된다.
+     */
+    public static Product create(String name, String description, Integer price,
+                                 Integer stock, Long userId) {
+        Product product = new Product();
+        product.name = name;
+        product.description = description;
+        product.price = price;
+        product.stock = stock;
+        product.userId = userId;
+        return product;
+    }
+
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
