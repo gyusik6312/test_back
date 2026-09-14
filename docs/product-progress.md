@@ -32,6 +32,16 @@
 
 ## 미완료 및 다음 단계
 
+### 현재 작업: 상품 목록 조회 DTO 및 Service
+
+- 등록 Controller는 인증 연동 방식 확인을 기다리며, 인증 없는 상품 목록 조회 작업을 먼저 진행한다.
+- ProductListResponse: 개별 상품의 productId, name, price, stock, createdAt을 전달한다. 상세 응답 계약은 제안 상태다.
+- ProductService.getProducts: 전체 상품을 createdAt 및 productId 내림차순으로 조회하여 DTO 목록으로 변환한다. 상품이 없으면 빈 목록을 반환한다.
+- Controller, 대표·기본 이미지 URL 및 페이지네이션은 미연결이다. 현재 전체 목록 조회이므로 데이터가 많아지기 전 페이지네이션 정책을 정해야 한다.
+- 이번 변경도 컴파일·DB 실행은 미검증이며, 커밋 이력은 커밋 후 Git 로그에서 확인한다.
+
+### 남은 작업
+
 1. 등록 Controller: 요청 방식(JSON/multipart), 팀 공통 응답 형식을 확정하고 Service·응답 DTO 연결.
 2. 인증 연동: 현재 체크아웃에는 JWT/인증 구현이 없다. 팀 인증 코드에서 사용자 ID를 얻는 방식을 확인해야 한다. 요청 본문의 사용자 ID를 신뢰하거나 임시 고정 사용자 ID를 사용하지 않는다.
 3. 사진 업로드·저장 및 기본 이미지 응답: 저장 위치, 파일 규칙, 기본 이미지 URL과 이미지 API 전체 경로 확인 필요.
