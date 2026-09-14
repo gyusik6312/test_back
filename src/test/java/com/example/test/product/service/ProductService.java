@@ -21,7 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import java.util.List;
 
 /**
- * 상품 등록·수정 및 목록·상세 조회·검색 처리 담당. 인증 정보 추출은 호출하는 쪽에서 처리한다.
+ * 상품 등록·수정·삭제 및 조회 처리 담당. 인증 정보 추출은 호출하는 쪽에서 처리한다.
  * TODO: Controller에서 기존 JWT 인증 정보의 사용자 ID를 전달하도록 연결.
  * 현재 userId 검증은 필수값·양수 확인이며, JWT 검증이나 사용자 존재 확인이 아니다.
  * TODO: 선택 사진 업로드와 상품 이미지 저장, 사진 미등록 시 기본 이미지 응답 연결.
@@ -32,6 +32,22 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+
+    /**
+     * 전달된 인증 사용자 ID가 등록자와 일치할 때 상품 행 삭제를 요청한다.
+     * TODO: Controller·JWT·HTTP 오류 응답 연결 및 이미지·리뷰 연관 데이터 삭제 정책 확정.
+     * 연관 데이터 처리는 아직 구현하지 않았다. DB 외래 키 정책에 따라 삭제가 거부될 수 있다.
+     */
+    @Transactional
+    public void deleteProduct(@NotNull @Positive Long productId,
+                              @NotNull @Positive Long userId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+        if (!userId.equals(product.getUserId())) {
+            throw new ProductAccessDeniedException();
+        }
+        productRepository.delete(product);
+    }
 
     /**
      * 전달된 인증 사용자 ID와 등록자 ID가 일치할 때만 상품을 부분 수정한다.

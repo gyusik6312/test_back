@@ -6,7 +6,8 @@
 - 리뷰, 로그인, 회원 기능은 수정하지 않는다. 기존 인증 기능과 연동한다.
 - 사용자 요청에 따라 product/productimage는 src/test/java/com/example/test 아래에 유지한다.
 - 구현 후 두 폴더를 src/main/java/com/example/test로 이동하고 실행·테스트를 확인한 뒤 develop 병합을 준비한다.
-- 작은 단계별로 구현하고 설명한다. 사용자가 커밋·푸시를 요청하면 해당 변경만 feature/product 브랜치에 올린다.
+- 작은 단계별로 구현하고 설명한다. 사용자가 커밋·푸시를 요청하면 기능별 feature/product-기능명 브랜치에 해당 변경을 올린다.
+- 상품 삭제는 feature/product에서 파생한 feature/product-delete에서 진행한다. 기존 상품 구현 이력을 포함하며, 이번 추가 커밋은 삭제 Service와 개발 기록 변경이다. 이후 기능 브랜치의 기준은 의존성과 병합 상태를 확인해 결정한다.
 - 팀 브랜치 규칙은 type/브랜치명이다. 신규 기능 feature, 버그 수정 fix, 긴급 수정 hotfix, 구조 개선 refactor, 문서 docs를 사용한다.
 - 성민 브랜치의 c6006a5까지 작성한 상품 작업 이력을 그대로 이어받아 feature/product를 생성했다. 기존 커밋과 성민 브랜치는 유지한다. 아래 과거 푸시 기록의 성민 표기는 당시 이력이다.
 - 커밋 제목에는 구현 내용을, 본문에는 상세 변경·미연결 항목·검증 한계를 기록한다.
@@ -75,7 +76,7 @@
 
 ### 다음 구현
 
-### 현재 작업: 상품 부분 수정
+### 상품 부분 수정 (c6006a5, 푸시 완료)
 
 - ProductUpdateRequest에 name, description, price, stock을 추가했다. 전달된 상품명은 공백 불가·최대 100자, 가격·재고는 0 이상이다.
 - 생략 및 null은 기존 값 유지, 설명의 빈 문자열은 설명 지우기, 빈 요청은 변경 없음으로 처리한다. 이 PATCH 규칙은 팀 명세 확인이 필요한 제안이다.
@@ -86,6 +87,16 @@
 - 파일 위치 유지. 공백 검사 수행. Java 환경 문제로 컴파일·DB 수정·권한 검증 테스트는 미수행이다.
 
 ### 이후 구현
+
+### 현재 작업: 상품 삭제 Service
+
+- ProductService.deleteProduct(productId, userId)를 추가했다. 상품 ID·사용자 ID의 필수값 및 양수 검증, 상품 존재 여부 및 등록자 ID 일치 확인 후 Repository.delete를 호출한다.
+- 상품 없음은 ProductNotFoundException, 등록자 불일치는 ProductAccessDeniedException으로 처리한다. 트랜잭션 안에서 상품 행 삭제를 요청한다.
+- userId는 기존 JWT 인증 정보에서 전달해야 한다. Controller·JWT 및 HTTP 성공/오류 응답 연결은 미완료다.
+- 이미지·리뷰 연관 데이터 처리는 미구현이다. DB 외래 키 정책에 따라 삭제가 거부되거나 DB에 정의된 동작이 적용될 수 있으므로 삭제 정책·실제 스키마 확인 전 완료된 삭제 API로 간주하지 않는다. 리뷰 코드는 수정하지 않았다.
+- src/test/java 위치 유지. 공백 검사 수행. Java 환경 문제로 컴파일·DB 삭제·권한 및 외래 키 검증은 미수행이다.
+
+### 후속 작업
 
 1. 등록 Controller: 요청 방식(JSON/multipart), 팀 공통 응답 형식을 확정하고 Service·응답 DTO 연결.
 2. 인증 연동: 현재 체크아웃에는 JWT/인증 구현이 없다. 팀 인증 코드에서 사용자 ID를 얻는 방식을 확인해야 한다. 요청 본문의 사용자 ID를 신뢰하거나 임시 고정 사용자 ID를 사용하지 않는다.
